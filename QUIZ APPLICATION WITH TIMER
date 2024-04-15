@@ -1,0 +1,98 @@
+import java.util.*;
+class QuizQuestion {
+    private String question;
+    private List<String> options;
+    private int correctOptionIndex;
+    public QuizQuestion(String question, List<String> options, int correctOptionIndex) {
+        this.question = question;
+        this.options = options;
+        this.correctOptionIndex = correctOptionIndex;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public List<String> getOptions() {
+        return options;
+    }
+
+    public int getCorrectOptionIndex() {
+        return correctOptionIndex;
+    }
+}
+
+class Quiz {
+    private List<QuizQuestion> questions;
+    private int currentQuestionIndex;
+    private int score;
+
+    public Quiz(List<QuizQuestion> questions) {
+        this.questions = questions;
+        this.currentQuestionIndex = 0;
+        this.score = 0;
+    }
+
+    public QuizQuestion getCurrentQuestion() {
+        return questions.get(currentQuestionIndex);
+    }
+
+    public void submitAnswer(int selectedOptionIndex) {
+        QuizQuestion currentQuestion = getCurrentQuestion();
+        if (selectedOptionIndex == currentQuestion.getCorrectOptionIndex()) {
+            score++;
+        }
+        currentQuestionIndex++;
+    }
+
+    public boolean hasNextQuestion() {
+        return currentQuestionIndex < questions.size();
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public List<String> getCorrectAnswers() {
+        List<String> correctAnswers = new ArrayList<>();
+        for (QuizQuestion question : questions) {
+            correctAnswers.add(question.getOptions().get(question.getCorrectOptionIndex()));
+        }
+        return correctAnswers;
+    }
+}
+
+public class QuizSystem {
+    public static void main(String[] args) {
+        // Create quiz questions
+        List<QuizQuestion> questions = new ArrayList<>();
+        questions.add(new QuizQuestion("What is the capital of France?", Arrays.asList("London", "Paris", "Berlin", "Rome"), 1));
+        questions.add(new QuizQuestion("What is the largest planet in our solar system?", Arrays.asList("Earth", "Jupiter", "Mars", "Venus"), 1));
+        questions.add(new QuizQuestion("Who wrote 'Romeo and Juliet'?", Arrays.asList("William Shakespeare", "Jane Austen", "Charles Dickens", "Mark Twain"), 0));
+
+        // Create quiz
+        Quiz quiz = new Quiz(questions);
+
+        // Simulate answering questions (this can be replaced with UI interaction)
+        Scanner scanner = new Scanner(System.in);
+        while (quiz.hasNextQuestion()) {
+            QuizQuestion currentQuestion = quiz.getCurrentQuestion();
+            System.out.println(currentQuestion.getQuestion());
+            List<String> options = currentQuestion.getOptions();
+            for (int i = 0; i < options.size(); i++) {
+                System.out.println((i + 1) + ". " + options.get(i));
+            }
+            System.out.print("Enter your answer (1-" + options.size() + "): ");
+            int selectedOptionIndex = scanner.nextInt() - 1;
+            quiz.submitAnswer(selectedOptionIndex);
+        }
+
+        // Display result
+        System.out.println("Quiz completed!");
+        System.out.println("Your score: " + quiz.getScore() + "/" + questions.size());
+        List<String> correctAnswers = quiz.getCorrectAnswers();
+        for (int i = 0; i < questions.size(); i++) {
+            System.out.println("Question " + (i + 1) + ": Correct answer is " + correctAnswers.get(i));
+        }
+    }
+}
